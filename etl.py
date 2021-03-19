@@ -27,18 +27,17 @@ def create_spark_session():
 
 
 def process_song_data(spark, input_data, output_data):
-    # song data file
-    #song_data = input_data + 'song_data/*/*/*/*.json'
-    song_data = input_data + 'song_data/A/B/C/TRABCEI128F424C983.json'
+    song_data = input_data + 'song_data/*/*/*/*.json'
+    #song_data = input_data + 'song_data/A/B/C/TRABCEI128F424C983.json'
     df = spark.read.json(song_data)
 
     # songs table
     songs_table = df.select('song_id', 'title', 'artist_id', 'year', 'duration')
-    songs_table.write.partitionBy("year", "artist_id").format("parquet").save("songs_table.parquet")
-
+    songs_table.write.mode('overwrite').partitionBy("year", "artist_id").format("parquet").save( output_data + "/songs.parquet")
+    
     # artists table
     artists_table = df.select('artist_id', 'artist_name', 'artist_location', 'artist_latitude', 'artist_longitude')
-    artists_table.write.format("parquet").save("artists_table.parquet")
+    artists_table.write.mode('overwrite').format("parquet").save(output_data + "/artists.parquet")
 
 
 def format_datetime(ts):
@@ -46,9 +45,8 @@ def format_datetime(ts):
     
     
 def process_log_data(spark, input_data, output_data):
-    # log data file
-    #log_data = input_data + 'log-data'
-    log_data = input_data + 'log-data/2018/11/2018-11-12-events.json'
+    log_data = input_data + 'log-data'
+    #log_data = input_data + 'log-data/2018/11/2018-11-12-events.json'
     df = spark.read.json(log_data)
     
     # filter by actions for song plays
@@ -56,17 +54,15 @@ def process_log_data(spark, input_data, output_data):
 
     # users table to parquet files
     users_table = df.select('userId', 'firstName', 'lastName', 'gender', 'level')
-    users_table.write.format("parquet").save("users_table.parquet")
+    users_table.write.mode('overwrite').format("parquet").save(output_data + "/users.parquet")
 
     # create timestamp column from original timestamp column
     get_timestamp = udf(lambda x: format_datetime(int(x)), TimestampType())
     df = df.withColumn("timestamp", get_timestamp(df.ts))
     
-    
     # create datetime column from original timestamp column
     get_datetime = udf(lambda x: format_datetime(int(x)), DateType())
     df = df.withColumn("datetime", get_datetime(df.ts))
-
     
     # extract columns to create time table
     #start_time, hour, day, week, month, year, weekday
@@ -79,41 +75,57 @@ def process_log_data(spark, input_data, output_data):
     ).dropDuplicates()
     
     # write time table to parquet files partitioned by year and month
-    time_table.write.partitionBy("year", "month").format("parquet").save("time_table.parquet")
+    time_table.write.mode('overwrite').partitionBy("year", "month").format("parquet").save(output_data + "/time.parquet")
 
     # read in song data to use for songplays table
-    #song_id, title, artist_id, year, duration
-    song_df = df.select('song_id', 'song', 'artist_id', 'year', 'duration')
-    #itemInSession, lastName, auth, registration, ts, artist, level, status, datetime, userId, page, song, firstName, userAgent, gender, location, method, length, sessionId, timestamp
+    song_df = spark.read.format("parquet").option(
+        "basePath", os.path.join(output_data, "songs.parquet/")
+    ).load(os.path.join(output_data, "songs.parquet/"))
 
     # extract columns from joined song and log datasets to create songplays table 
     #songplay_id, start_time, user_id, level, song_id, artist_id, session_id, location, user_agent
-    #songplays_table = 
+    songplays_table = df.join(
+        song_df, 
+        (df.song == song_df.title) &
+        (df.length == song_df.duration), 'left_outer'
+    ).select(
+        df.timestamp, 
+        col("userId").alias('user_id'), 
+        df.level, 
+        song_df.song_id, 
+        song_df.artist_id, 
+        col("sessionId").alias("session_id"), 
+        df.location, 
+        col("useragent").alias("user_agent"),
+        year('datetime').alias('year'),
+        month('datetime').alias('month')
+    )
 
     # write songplays table to parquet files partitioned by year and month
     #songplays_table
-    pass
+    songplays_table.write.mode('overwrite').partitionBy("year", "month").format("parquet").save(output_data + "/songplays.parquet")
 
 
 def main():
     spark = create_spark_session()
     input_data = "s3a://udacity-dend/"
-    output_data = ""
+    output_data = "output_data"
     
     process_song_data(spark, input_data, output_data)    
     process_log_data(spark, input_data, output_data)
     
     
 def clean_files():
-    os.system('rm -rf /home/workspace/songs_table.parquet')
-    os.system('rm -rf /home/workspace/artists_table.parquet')
-    os.system('rm -rf /home/workspace/users_table.parquet')
-    os.system('rm -rf /home/workspace/time_table.parquet')   
+    os.system('rm -rf /home/workspace/output_data/songs.parquet')
+    os.system('rm -rf /home/workspace/output_data/artists.parquet')
+    os.system('rm -rf /home/workspace/output_data/users.parquet')
+    os.system('rm -rf /home/workspace/output_data/time.parquet')
+    os.system('rm -rf /home/workspace/output_data/songplays.parquet') 
 
 
 if __name__ == "__main__":
     
-    clean_files()
+    #clean_files()
     
     main()
     

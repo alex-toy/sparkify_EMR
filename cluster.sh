@@ -1,0 +1,1 @@
+aws emr create-cluster --name clusterP4 --use-default-roles --release-label emr-5.28.0 --instance-count 3 --applications Name=Spark  --ec2-attributes KeyName=/Users/alexei/docs/keyPairP4 --instance-type m5.xlarge --auto-terminate

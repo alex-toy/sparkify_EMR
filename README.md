@@ -1,4 +1,4 @@
-# Data Engineering project 3 - Data Lake with AWS Elastic Map Reduce
+# Data Engineering project 4 - Data Lake with AWS Elastic Map Reduce
 
 By Alessio Rea
 
@@ -15,9 +15,13 @@ The purpose of the project is to move a data warehouse to a data lake. The data 
 
 ## 2. Database schema design and ETL pipeline
 
-In this project, initial dataset comes from two json files :
+You'll be working with two datasets that reside in S3. Here are the S3 links for each:
 
-- First : Song Dataset
+    - Song data: s3://udacity-dend/song_data
+    - Log data: s3://udacity-dend/log_data
+
+
+- Song Dataset
     
     Here are filepaths to two files that could be found in such a dataset :
 

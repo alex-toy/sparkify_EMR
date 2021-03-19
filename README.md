@@ -15,7 +15,7 @@ The purpose of the project is to move a data warehouse to a data lake. The data 
 
 ## 2. Database schema design and ETL pipeline
 
-You'll be working with two datasets that reside in S3. Here are the S3 links for each:
+The two datasets that reside in S3. Here are the S3 links for each:
 
     - Song data: s3://udacity-dend/song_data
     - Log data: s3://udacity-dend/log_data
@@ -38,7 +38,7 @@ You'll be working with two datasets that reside in S3. Here are the S3 links for
 
     Those files contain the following features : 'artist_id', 'artist_latitude', 'artist_location', 'artist_longitude', 'artist_name', 'duration', 'num_songs', 'song_id', 'title', 'year'
 
-- Second : Log Dataset
+- Log Dataset
     
     Here are filepaths to two files that could be found in such a dataset :
 
@@ -76,22 +76,10 @@ Once the data has been ETLed, you are free to take full benefit from the power o
 # Project Organization 
 ----------------------
 
-    ├── README.md                           <- The top-level README for users and developers using this project.
-    ├── create_tables.py                    <- Python script allowing to create database, create / drop tables with appropriate schema.
-    ├── IaC1.py                             <- Creates new iam role, attaches policy AmazonS3ReadOnlyAccess to it and finally creates new cluster programmatically.
-    ├── IaC2.py                             <- Open an incoming TCP port to access the cluster endpoint.
-    ├── etl_staging.ipynb                   <- Loads staging tables from S3 into cluster.
-    ├── etl_tables.ipynb                    <- Creates facts and dimension tables.
-    ├── requirements.txt                    <- install psycopg2 for local use
-    ├── sql_queries_creation.py             <- SQL queries for creation of tables
-    ├── sql_queries_staging_insertion.py    <- SQL queries for insertion of data into staging tables.
-    ├── sql_queries_tables_insertion.py     <- SQL queries for insertion of data into fact and dimension tables.
-    ├── test.ipynb                          <- Unitary tests for creation, deletion, insertion steps
-    ├── release_resources.py                <- Automatically release all resources created on Redshift.
-    ├── settings.py                         <- Useful functions for project.
-    ├── get_files_from_S3.py                <- Download files form S3 to have a look at internal structure.
-    ├── dwh.cfg                             <- Config file containing credentials. Hide it!!
-
+    ├── README.md           <- The top-level README for users and developers using this project.
+    ├── etl.ipynb           <- Loads staging tables from S3 into cluster.
+    ├── dl.cfg              <- Config file containing credentials. Hide it!!
+    ├── requirements.txt    <- necessary packages
 
 
 

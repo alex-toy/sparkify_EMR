@@ -1,4 +1,4 @@
-# Data Engineering project 3 - Data Warehouse with AWS Elastic Map Reduce
+# Data Engineering project 3 - Data Lake with AWS Elastic Map Reduce
 
 By Alessio Rea
 
@@ -10,8 +10,7 @@ You need to have Python 3.8.5 installed for this project
 
 ## 1. Purpose of the project
 
-The purpose of the project is to build an ETL pipeline that extracts data from S3, stages it in Redshift, and transforms data into a set of dimensional tables for analysis and insights in what songs users are listening to. Data is modelled according to a star schema with fact and dimension tables for fast and easy analysis. Redshift gives the opportunity to execute SQL statements that create the analytics tables from these staging tables.
-
+The purpose of the project is to move a data warehouse to a data lake. The data resides in S3, in a directory of JSON logs on user activity on the app, as well as a directory with JSON metadata on the songs in their app. The projects consists in building an ETL pipeline that extracts data from S3, processes it using Spark, and loads the data back into S3 as a set of dimensional tables. This will allow the analytics team to continue finding insights in what songs users are listening to.
 
 
 ## 2. Database schema design and ETL pipeline

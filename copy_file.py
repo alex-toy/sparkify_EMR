@@ -8,7 +8,7 @@ args = {
 }
 
 
-command = '''scp -i {KeyPair} {source_file} {dns}:{local_path}'''.format(**args)
+command = '''sudo scp -i {KeyPair} {source_file} {dns}:{local_path}'''.format(**args)
 
 
 #print(command)

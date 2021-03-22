@@ -16,7 +16,9 @@ aws emr create-cluster --name {name} --use-default-roles --release-label emr-5.2
 --instance-type m5.xlarge {terminate} 
 '''.format(**args)
 
-#print(command)
+print('*'*20)
+print(command)
+print('*'*20)
 
 os.system(command)
 

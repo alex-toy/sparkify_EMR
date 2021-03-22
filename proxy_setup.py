@@ -10,7 +10,9 @@ args = {
 command = '''ssh -i {KeyPair} -N -D {port} {dns}'''.format(**args)
 
 
-#print(command)
+print('*'*20)
+print(command)
+print('*'*20)
 
 os.system(command)
 

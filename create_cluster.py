@@ -18,5 +18,6 @@ aws emr create-cluster --name {name} --use-default-roles --release-label emr-5.2
 
 #print(command)
 
-#os.system(command)
+os.system(command)
 
+ 

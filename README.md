@@ -79,12 +79,12 @@ Once the data has been ETLed, you are free to take full benefit from the power o
     ├── README.md           <- The top-level README for users and developers using this project.
     ├── etl.ipynb           <- Loads staging tables from S3 into cluster.
     ├── dl.cfg              <- Config file containing credentials. Hide it!!
-    ├── requirements.txt    <- necessary packages for local use
-    ├── create_cluster.py   <- programmatically create AWS cluster
-    ├── proxy_setup.py      <- set up a proxy for connexion
-    ├── test_ssh.py         <- create an ssh connexion with your cluster master node
-    ├── copy_file.py        <- copy all needed files for application to work remotely (dl.cfg, etl.py)
-    ├── data                <- data for local test
+    ├── requirements.txt    <- Necessary packages for local use.
+    ├── create_cluster.py   <- Programmatically create AWS cluster.
+    ├── proxy_setup.py      <- Set up a proxy for connexion.
+    ├── test_ssh.py         <- Create an ssh connexion with your cluster master node.
+    ├── copy_file.py        <- Copy all needed files for application to work remotely (dl.cfg, etl.py).
+    ├── data                <- Data for local test.
 
 
 

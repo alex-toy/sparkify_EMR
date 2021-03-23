@@ -54,7 +54,9 @@ def process_song_data(spark, input_data, output_data):
     df = spark.read.json(song_data)
 
     # songs table
-    songs_table = df.select('song_id', 'title', 'artist_id', 'year', 'duration')
+    songs_table = df.select(
+        'song_id', 'title', 'artist_id', 'year', 'duration'
+    ).drop_duplicates(subset=['song_id'])
     songs_table.write.mode('overwrite').partitionBy("year", "artist_id").format("parquet").save( output_data + "/songs.parquet")
     
     # artists table

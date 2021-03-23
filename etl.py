@@ -14,7 +14,16 @@ os.environ['AWS_SECRET_ACCESS_KEY']=config['AWS']['AWS_SECRET_ACCESS_KEY']
 
 
 def create_spark_session():
-    #spark = SparkSession.builder.config("spark.jars.packages", "org.apache.hadoop:hadoop-aws:2.7.0").getOrCreate()
+    """
+    Utility function that loads create spark connexion.
+    Parameters
+    ----------
+    No parameter
+
+    Returns
+    -------
+    No return.
+    """
     spark = SparkSession \
         .builder \
         .config("spark.jars.packages", "org.apache.hadoop:hadoop-aws:2.7.0") \
@@ -27,6 +36,19 @@ def create_spark_session():
 
 
 def process_song_data(spark, input_data, output_data):
+    """
+    Extracts song data form S3, then create songs_table and artists_table and finally writes parquet files inside output_data.
+    
+    Parameters
+    ----------
+    spark : spark session provided by create_spark_session function.
+    input_data : S3 url to retrieve data from.
+    output_data : file to put processed data
+    
+    Returns
+    -------
+    No return.
+    """
     song_data = input_data + 'song_data/*/*/*/*.json'
     #song_data = input_data + 'song_data/A/B/C/TRABCEI128F424C983.json'
     df = spark.read.json(song_data)
@@ -36,15 +58,41 @@ def process_song_data(spark, input_data, output_data):
     songs_table.write.mode('overwrite').partitionBy("year", "artist_id").format("parquet").save( output_data + "/songs.parquet")
     
     # artists table
-    artists_table = df.select('artist_id', 'artist_name', 'artist_location', 'artist_latitude', 'artist_longitude')
+    artists_table = df.select(
+        'artist_id', 'artist_name', 'artist_location', 'artist_latitude', 'artist_longitude'
+    ).drop_duplicates(subset=['artist_id'])
     artists_table.write.mode('overwrite').format("parquet").save(output_data + "/artists.parquet")
 
 
 def format_datetime(ts):
+    """
+    Extracts time stamp from ts.
+    
+    Parameters
+    ----------
+    ts : timestamp
+    
+    Returns
+    -------
+    Timestamp.
+    """
     return datetime.fromtimestamp(ts/1000.0) 
     
     
 def process_log_data(spark, input_data, output_data):
+    """
+    Extracts log data form S3, then create users_table, time_table and songplays_table and finally writes parquet files inside output_data.
+    
+    Parameters
+    ----------
+    spark : spark session provided by create_spark_session function.
+    input_data : S3 url to retrieve data from.
+    output_data : file to put processed data
+    
+    Returns
+    -------
+    No return.
+    """
     log_data = input_data + 'log-data/*/*/*.json'
     #log_data = input_data + 'log-data/2018/11/2018-11-12-events.json'
     df = spark.read.json(log_data)
@@ -53,7 +101,9 @@ def process_log_data(spark, input_data, output_data):
     df = df.filter(df.page == 'NextSong')
 
     # users table to parquet files
-    users_table = df.select('userId', 'firstName', 'lastName', 'gender', 'level')
+    users_table = df.select(
+        'userId', 'firstName', 'lastName', 'gender', 'level'
+    ).drop_duplicates(subset=['userId'])
     users_table.write.mode('overwrite').format("parquet").save(output_data + "/users.parquet")
 
     # create timestamp column from original timestamp column
@@ -72,7 +122,7 @@ def process_log_data(spark, input_data, output_data):
         'timestamp',
         year(df.datetime).alias('year'),
         month(df.datetime).alias('month')
-    ).dropDuplicates()
+    ).dropDuplicates(subset=['ts'])
     
     # write time table to parquet files partitioned by year and month
     time_table.write.mode('overwrite').partitionBy("year", "month").format("parquet").save(output_data + "/time.parquet")
@@ -106,6 +156,17 @@ def process_log_data(spark, input_data, output_data):
 
 
 def main():
+    """
+    Runs the whole process altogether.
+    
+    Parameters
+    ----------
+    No parameter.
+    
+    Returns
+    -------
+    No return.
+    """
     spark = create_spark_session()
     input_data = "s3a://udacity-dend/"
     output_data = "output_data"
@@ -115,6 +176,17 @@ def main():
     
     
 def clean_files():
+    """
+    File cleaning, to be used only locally for test purposes.
+    
+    Parameters
+    ----------
+    No parameters
+    
+    Returns
+    -------
+    No return.
+    """
     os.system('rm -rf /home/workspace/output_data/songs.parquet')
     os.system('rm -rf /home/workspace/output_data/artists.parquet')
     os.system('rm -rf /home/workspace/output_data/users.parquet')

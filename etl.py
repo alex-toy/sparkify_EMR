@@ -45,7 +45,7 @@ def format_datetime(ts):
     
     
 def process_log_data(spark, input_data, output_data):
-    log_data = input_data + 'log-data'
+    log_data = input_data + 'log-data/*/*/*.json'
     #log_data = input_data + 'log-data/2018/11/2018-11-12-events.json'
     df = spark.read.json(log_data)
     

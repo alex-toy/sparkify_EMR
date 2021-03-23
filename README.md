@@ -111,17 +111,15 @@ $ pip install -r requirements.txt
 
 ## 2. Configuration of project
 
-You need to have an AWS account to run the complete analysis. You also need to create a user that has AmazonRedshiftFullAccess as well as AmazonS3ReadOnlyAccess policies. Make sure to keep its KEY and SECRET credentials in a safe place.
+You need to have an AWS account to run the complete analysis. You also need to create a user with programmatic access and that has AdministratorAccess. Download its secret access key file and keep it secret.
 
-1. Copy the *dwh.cfg* into a safe place.
-2. Fill in all fields except *LOG_DATA*, *LOG_JSONPATH*, *SONG_DATA* which are already filled and *DWH_ENDPOINT*, *DWH_ROLE_ARN* which will be automatically filled for you. 
-3. In file *settings.py*, give the path to *dwh.cfg* to variable *config_file*.
-4. Run *IaC_1.py* and wait untill you see the cluster available in your console.
-4. Run *IaC_2.py*.
-5. Run *create_tables.py* and check that all tables are created in the redshift query editor.
-6. Run *etl_staging.py*, then *etl_tables.py*. In the query editor, run queries to ensure that tables *staging_events* and *staging_songs* and other fact and dimension tables are properly populated.
-7. Fill free to write queries in *test.py* to analyse the data.
-8. Once done, don't forget to *release_resources.py* !!!!
+
+1. Configure the AWS CLI using the downloaded secret access key file.
+2. Inside create_cluster.py, configure the args dictionary. Then run create_cluster.py to create a cluster. 
+3. Change Security Groups for your previously created EMR cluster master : add inbound rule SSH with your local IP.
+4. Inside test_ssh.py, configure the args dictionary. Then run test_ssh.py to check that you can ssh into your master.
+5. Inside copy_file.py, configure the args dictionary. Then run copy_file.py to copy all files needed for your spark job to run.
+6. Inside your ssh connection, run the following command : /usr/bin/spark-submit --master yarn etl.py
 
 
 --------

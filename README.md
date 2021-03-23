@@ -79,7 +79,12 @@ Once the data has been ETLed, you are free to take full benefit from the power o
     ├── README.md           <- The top-level README for users and developers using this project.
     ├── etl.ipynb           <- Loads staging tables from S3 into cluster.
     ├── dl.cfg              <- Config file containing credentials. Hide it!!
-    ├── requirements.txt    <- necessary packages
+    ├── requirements.txt    <- necessary packages for local use
+    ├── create_cluster.py   <- programmatically create AWS cluster
+    ├── proxy_setup.py      <- set up a proxy for connexion
+    ├── test_ssh.py         <- create an ssh connexion with your cluster master node
+    ├── copy_file.py        <- copy all needed files for application to work remotely (dl.cfg, etl.py)
+    ├── data                <- data for local test
 
 
 
@@ -96,12 +101,6 @@ $ cd <this_project>
 
 I suggest you create a python virtual environment for this project : <https://docs.python.org/3/tutorial/venv.html>
 
-I had a problem installing psycopg2. The following lines did the trick though :
-
-```
-- export LDFLAGS="-L/usr/local/opt/openssl/lib"
-- export CPPFLAGS="-I/usr/local/opt/openssl/include"
-```
 
 ```
 $ pip install -r requirements.txt
